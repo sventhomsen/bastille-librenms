@@ -8,7 +8,7 @@ ARG MARIADB_USER_LIBRENMS_PASSWORD=*changeme*
 
 ARG MARIADB_DATABASE_LIBRENMS_NAME=librenms
 
-ARG TIMEZONE=Europe/Berlin
+ARG TIMEZONE=Europe\/Berlin
 
 ## Include existing templates from BastilleBSD repos
 INCLUDE https://gitlab.com/bastillebsd-templates/mariadb-server
