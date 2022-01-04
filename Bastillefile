@@ -10,8 +10,8 @@ ARG MARIAD_DATABASE_LIBRENMS librenms
 
 
 ## Include existing templates from BastilleBSD repos
-INCLUDE https://github.com/BastilleBSD/templates/blob/main/databases/mariadb-server
-INCLUDE https://github.com/BastilleBSD/templates/tree/main/www/nginx
+INCLUDE https://github.com/BastilleBSD/templates/databases/mariadb-server
+INCLUDE https://github.com/BastilleBSD/templates/www/nginx
 
 
 
