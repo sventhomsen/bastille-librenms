@@ -15,9 +15,9 @@ There also is a port of librenms, which you could also try.
 
 After a while, you should be able to point your browser to the ip adress (192.168.1.1 in this example) and finish the installation.
 
-![First launch](./librenms-launch.jpg)
-![Databse Setup](./librenms-database.jpg)
-![Create Admin User](./librenms-admin.jpg)
-![First login](./librenms-login.jpg)
+![First launch](/librenms-launch.jpg)
+![Databse Setup](/librenms-database.jpg)
+![Create Admin User](/librenms-admin.jpg)
+![First login](/librenms-login.jpg)
 
 
