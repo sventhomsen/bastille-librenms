@@ -61,7 +61,11 @@ PKG php80-xml
 ## Install and configure python
 
 PKG python3
+PKG python38
 PKG py38-pip
+
+# librenms wants an executable named pip3
+CMD ln -s /usr /local/bin/pip-3.8 /usr/local/bin/pip3 
 
 
 ## Install librenms from stable repo
