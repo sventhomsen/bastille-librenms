@@ -1,5 +1,5 @@
 # bastille-librenms
-A Bastille template for running librenms in a FreeBSD jail 
+A [Bastille](https://bastillebsd.org/) template for running [LibreNMS](https://librenms.org) in a FreeBSD jail 
 
 This template creates a working installation of LibreNMS with a clean database.
 
