@@ -1,4 +1,9 @@
 ## This Bastillefile tries to follow https://docs.librenms.org/Installation/Install-LibreNMS/ 
+## 
+## This creates a fresh instance of librenms in a bastille jail
+## You will lose any previous data of an existing librenms instance, so be careful in case
+## you're using nullfs-mounts of production data
+
 
 ## Variables
 ARG MARIADB_ROOT_PASSWORD=*changeme*
