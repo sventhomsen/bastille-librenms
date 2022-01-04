@@ -3,7 +3,7 @@ A [Bastille](https://bastillebsd.org/) template for running [LibreNMS](https://l
 
 This template creates a working installation of LibreNMS with a clean database.
 
-I've done it mostly as an alternative way for documenting my setup. 
+I've created this Bastillefile mostly as an alternative documentation of my setup at home. 
 
 There also is a port of librenms, which you could also try.
 
