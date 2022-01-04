@@ -57,6 +57,8 @@ PKG php80-tokenizer
 PKG php80-xml
 
 # Configure PHP
+CMD sed s/\;date.timezone\ =/date.timezone=GMT+1/ < /usr/local/etc/php.ini-production > /usr/local/etc/php.ini
+
 
 ## Install and configure python
 
@@ -95,20 +97,33 @@ CMD chmod -R g+rwX /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/
 # Install PHP dependencies
 CMD su - librenms -c '/opt/librenms/scripts/composer_wrapper.php install --no-dev'
 
-## Configure librenms for first login of admin user
-# call lnms options for database
+# Install command line tools
+PKG fping
+PKG rrdtool
+PKG net-snmp
 
+## Configure librenms for first login of admin user
+
+# pre-fill database configuration
+# there seems to be a problem with the web installer and using unix socket, so let's hack around this 
+# by pre-filling the database config in the .env-file
 CMD touch /opt/librenms/.env
 CMD chmod 660 /opt/librenms/.env
 
-#CMD su - librenms -c "/opt/librenms/lnms config:set db_host localhost"
-#CMD su - librenms -c "/opt/librenms/lnms config:set db_socket /var/run/mysql/mysql.sock"
-#CMD su - librenms -c "/opt/librenms/lnms config:set db_name ${MARIADB_DATABASE_LIBRENMS_NAME}"
-#CMD su - librenms -c "/opt/librenms/lnms config:set db_user ${MARIADB_USER_LIBRENMS_NAME}"
-#CMD su - librenms -c "/opt/librenms/lnms config:set db_pass ${MARIADB_USER_LIBRENMS_PASSWORD}"
+CMD echo "DB_HOST=localhost" >> .env
+CMD echo "DB_DATABASE=${MARIADB_DATABASE_LIBRENMS_NAME}" >> .env
+CMD echo "DB_USERNAME=${MARIADB_USER_LIBRENMS_NAME}" >> .env
+CMD echo "DB_PASSWORD=${MARIADB_USER_LIBRENMS_PASSWORD}" >> .env
+CMD echo "DB_SOCKET=/var/run/mysql/mysql.sock" >> .env
+CMD echo "UNIX_SOCKET=/var/run/mysql/mysql.sock" >> .env
 
-
-# migrate database
+# change seetings via lnms 
+CMD su - librenms -c "/opt/librenms/lnms config:set fping /usr/local/bin/fping"
+CMD su - librenms -c "/opt/librenms/lnms config:set rrdtool /usr/local/bin/rrdtool"
+CMD su - librenms -c "/opt/librenms/lnms config:set snmpwalk /usr/local/bin/snmpwalk"
+CMD su - librenms -c "/opt/librenms/lnms config:set snmpget /usr/local/bin/snmpget"
+CMD su - librenms -c "/opt/librenms/lnms config:set snmpgetnext /usr/local/bin/snmpgetnext"
+CMD su - librenms -c "/opt/librenms/lnms config:set snmpbulkwalk /usr/local/bin/snmpbulkwalk"
 
 
 
