@@ -1,12 +1,12 @@
 ## This Bastillefile tries to follow https://docs.librenms.org/Installation/Install-LibreNMS/ 
 
 ## Variables
-ARG MARIADB_ROOT_PASSWORD *changeme*
+ARG MARIADB_ROOT_PASSWORD=*changeme*
 
-ARG MARIADB_USER_LIBRENMS_NAME librenms
-ARG MARIADB_USER_LIBRENMS_PASSWORD *changeme*
+ARG MARIADB_USER_LIBRENMS_NAME=librenms
+ARG MARIADB_USER_LIBRENMS_PASSWORD=*changeme*
 
-ARG MARIAD_DATABASE_LIBRENMS librenms
+ARG MARIADB_DATABASE_LIBRENMS=librenms
 
 
 ## Include existing templates from BastilleBSD repos
@@ -21,11 +21,11 @@ INCLUDE https://gitlab.com/bastillebsd-templates/nginx
 
 
 # mariadb: create database for librenms
-CMD mysql -u root -e "CREATE DATABASE ${MARIADB_DATABASE_LIBRENMS} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+CMD mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MARIADB_DATABASE_LIBRENMS} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 # mariadb: create user for librenms
-CMD mysql -u root -e "CREATE USER '${MARIADB_USER_LIBRENMS_NAME}'@'localhost' IDENTIFIED BY '{MARIADB_USER_LIBRENMS_PASSWORD}';"
-CMD mysql -u root -e "GRANT ALL PRIVILEGES ON {MARIADB_DATABASE_LIBRENMS}.* TO '${MARIADB_USER_LIBRENMS_NAME}'@'localhost';"
+CMD mysql -u root -e "CREATE USER IF NOT EXISTS '${MARIADB_USER_LIBRENMS_NAME}'@'localhost' IDENTIFIED BY '{MARIADB_USER_LIBRENMS_PASSWORD}';"
+CMD mysql -u root -e "GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE_LIBRENMS}.* TO '${MARIADB_USER_LIBRENMS_NAME}'@'localhost';"
 CMD mysql -u root -e "FLUSH PRIVILEGES;"
 
 
@@ -58,6 +58,10 @@ PKG php80-xml
 
 # Configure PHP
 
+## Install and configure python
+
+PKG python3
+PKG py38-pip
 
 
 ## Install librenms from stable repo
@@ -66,7 +70,8 @@ PKG php80-xml
 PKG bash
 
 # Add user librenms 
-CMD pw useradd -q -n librenms -g librenms -d /opt/librenms -s /usr/local/bin/bash -w no 
+CMD pw groupadd  -n librenms 
+CMD pw useradd  -n librenms -g librenms -d /opt/librenms -s /usr/local/bin/bash -w no 
 
 # Pull librenms from git
 PKG git
@@ -75,18 +80,17 @@ CMD git clone https://github.com/librenms/librenms.git /opt/librenms
 # Fix permissions an ownership
 CMD chown -R librenms:librenms /opt/librenms
 CMD chmod 771 /opt/librenms
-CMD setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
-CMD setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+CMD chmod -R g+rwX /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
 
 # Install PHP dependencies
-CMD su - librenms '/opt/librenms/scripts/composer_wrapper.php install --no-dev'
+CMD su - librenms -c '/opt/librenms/scripts/composer_wrapper.php install --no-dev'
 
 ## Configure librenms for first login of admin user
 # call lnms options for database
 # migrate database
 
 ## Configure nginx
-CP usr/local/etc/nginx.conf /usr/local/etc/nginx.conf
+CP usr/local/etc/nginx.conf /usr/local/etc/nginx/nginx.conf
 
 ## Restart services
 
