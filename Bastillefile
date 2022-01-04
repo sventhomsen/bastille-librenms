@@ -119,7 +119,7 @@ CMD echo "DB_SOCKET=/var/run/mysql/mysql.sock" >> /opt/librenms/.env
 CMD echo "UNIX_SOCKET=/var/run/mysql/mysql.sock" >> /opt/librenms/.env
 
 # change seetings via lnms 
-CMD su - librenms -c "/opt/librenms/lnms config:set fping `which fping`"
+CMD su - librenms -c "/opt/librenms/lnms config:set fping /usr/local/sbin/fping"
 CMD su - librenms -c "/opt/librenms/lnms config:set rrdtool /usr/local/bin/rrdtool"
 CMD su - librenms -c "/opt/librenms/lnms config:set snmpwalk /usr/local/bin/snmpwalk"
 CMD su - librenms -c "/opt/librenms/lnms config:set snmpget /usr/local/bin/snmpget"
