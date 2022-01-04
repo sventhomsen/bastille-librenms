@@ -105,8 +105,11 @@ PKG net-snmp
 
 ## Configure librenms for first login of admin user
 
+# pre-fill database
+CMD mysql -u root librenms < /opt/librenms/database/schema/mysql-schema.dump
+
 # pre-fill database configuration
-# there seems to be a problem with the web installer and using unix socket, so let's hack around this 
+# there seems to be a problem with the web installer and using unix sockets, so let's hack around this 
 # by pre-filling the database config in the .env-file
 CMD touch /opt/librenms/.env
 CMD chmod 660 /opt/librenms/.env
