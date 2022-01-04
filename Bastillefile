@@ -58,7 +58,7 @@ PKG php80-tokenizer
 PKG php80-xml
 
 # Configure PHP
-CMD sed s/\;date.timezone\ =/date.timezone=${TIMEZONE}/ < /usr/local/etc/php.ini-production > /usr/local/etc/php.ini
+CMD sed "s/\;date.timezone\ =/date.timezone=${TIMEZONE}/ "< /usr/local/etc/php.ini-production > /usr/local/etc/php.ini
 
 
 ## Install and configure python
