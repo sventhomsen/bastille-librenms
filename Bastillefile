@@ -101,11 +101,11 @@ CMD su - librenms -c '/opt/librenms/scripts/composer_wrapper.php install --no-de
 CMD touch /opt/librenms/.env
 CMD chmod 660 /opt/librenms/.env
 
-CMD su - librenms -c "/opt/librenms/lnms config:set db_host localhost"
+#CMD su - librenms -c "/opt/librenms/lnms config:set db_host localhost"
 #CMD su - librenms -c "/opt/librenms/lnms config:set db_socket /var/run/mysql/mysql.sock"
-CMD su - librenms -c "/opt/librenms/lnms config:set db_name ${MARIADB_DATABASE_LIBRENMS_NAME}"
-CMD su - librenms -c "/opt/librenms/lnms config:set db_user ${MARIADB_USER_LIBRENMS_NAME}"
-CMD su - librenms -c "/opt/librenms/lnms config:set db_pass ${MARIADB_USER_LIBRENMS_PASSWORD}"
+#CMD su - librenms -c "/opt/librenms/lnms config:set db_name ${MARIADB_DATABASE_LIBRENMS_NAME}"
+#CMD su - librenms -c "/opt/librenms/lnms config:set db_user ${MARIADB_USER_LIBRENMS_NAME}"
+#CMD su - librenms -c "/opt/librenms/lnms config:set db_pass ${MARIADB_USER_LIBRENMS_PASSWORD}"
 
 
 # migrate database
