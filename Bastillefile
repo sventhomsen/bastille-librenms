@@ -111,12 +111,12 @@ PKG net-snmp
 CMD touch /opt/librenms/.env
 CMD chmod 660 /opt/librenms/.env
 
-CMD echo "DB_HOST=localhost" >> .env
-CMD echo "DB_DATABASE=${MARIADB_DATABASE_LIBRENMS_NAME}" >> .env
-CMD echo "DB_USERNAME=${MARIADB_USER_LIBRENMS_NAME}" >> .env
-CMD echo "DB_PASSWORD=${MARIADB_USER_LIBRENMS_PASSWORD}" >> .env
-CMD echo "DB_SOCKET=/var/run/mysql/mysql.sock" >> .env
-CMD echo "UNIX_SOCKET=/var/run/mysql/mysql.sock" >> .env
+CMD echo "DB_HOST=localhost" >> /opt/librenms/.env
+CMD echo "DB_DATABASE=${MARIADB_DATABASE_LIBRENMS_NAME}" >> /opt/librenms/.env
+CMD echo "DB_USERNAME=${MARIADB_USER_LIBRENMS_NAME}" >> /opt/librenms/.env
+CMD echo "DB_PASSWORD=${MARIADB_USER_LIBRENMS_PASSWORD}" >> /opt/librenms/.env
+CMD echo "DB_SOCKET=/var/run/mysql/mysql.sock" >> /opt/librenms/.env
+CMD echo "UNIX_SOCKET=/var/run/mysql/mysql.sock" >> /opt/librenms/.env
 
 # change seetings via lnms 
 CMD su - librenms -c "/opt/librenms/lnms config:set fping /usr/local/bin/fping"
