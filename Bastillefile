@@ -6,7 +6,7 @@ ARG MARIADB_ROOT_PASSWORD=*changeme*
 ARG MARIADB_USER_LIBRENMS_NAME=librenms
 ARG MARIADB_USER_LIBRENMS_PASSWORD=*changeme*
 
-ARG MARIADB_DATABASE_LIBRENMS=librenms
+ARG MARIADB_DATABASE_LIBRENMS_NAME=librenms
 
 
 ## Include existing templates from BastilleBSD repos
@@ -21,11 +21,11 @@ INCLUDE https://gitlab.com/bastillebsd-templates/nginx
 
 
 # mariadb: create database for librenms
-CMD mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MARIADB_DATABASE_LIBRENMS} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+CMD mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MARIADB_DATABASE_LIBRENMS_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 # mariadb: create user for librenms
-CMD mysql -u root -e "CREATE USER IF NOT EXISTS '${MARIADB_USER_LIBRENMS_NAME}'@'localhost' IDENTIFIED BY '{MARIADB_USER_LIBRENMS_PASSWORD}';"
-CMD mysql -u root -e "GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE_LIBRENMS}.* TO '${MARIADB_USER_LIBRENMS_NAME}'@'localhost';"
+CMD mysql -u root -e "CREATE USER IF NOT EXISTS '${MARIADB_USER_LIBRENMS_NAME}'@'localhost' IDENTIFIED BY '${MARIADB_USER_LIBRENMS_PASSWORD}';"
+CMD mysql -u root -e "GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE_LIBRENMS_NAME}.* TO '${MARIADB_USER_LIBRENMS_NAME}'@'localhost';"
 CMD mysql -u root -e "FLUSH PRIVILEGES;"
 
 
@@ -77,25 +77,43 @@ PKG bash
 CMD pw groupadd  -n librenms 
 CMD pw useradd  -n librenms -g librenms -d /opt/librenms -s /usr/local/bin/bash -w no 
 
+# Add user www to group librenms
+CMD pw groupmod -n librenms -m www
+
 # Pull librenms from git
 PKG git
 CMD git clone https://github.com/librenms/librenms.git /opt/librenms
 
-# Fix permissions an ownership
+# Fix permissions and ownership
 CMD chown -R librenms:librenms /opt/librenms
 CMD chmod 771 /opt/librenms
+CMD touch /opt/librenms/logs/librenms.log
 CMD chmod -R g+rwX /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+
+
 
 # Install PHP dependencies
 CMD su - librenms -c '/opt/librenms/scripts/composer_wrapper.php install --no-dev'
 
 ## Configure librenms for first login of admin user
 # call lnms options for database
+
+CMD su - librenms -c "/opt/librenms/lnms config:set db_host localhost"
+CMD su - librenms -c "/opt/librenms/lnms config:set db_socket /var/run/mysql/mysql.sock"
+CMD su - librenms -c "/opt/librenms/lnms config:set db_name ${MARIADB_DATABASE_LIBRENMS_NAME}"
+CMD su - librenms -c "/opt/librenms/lnms config:set db_user ${MARIADB_USER_LIBRENMS_NAME}"
+CMD su - librenms -c "/opt/librenms/lnms config:set db_pass ${MARIADB_USER_LIBRENMS_PASSWORD}"
+
+
 # migrate database
+
+
 
 ## Configure nginx
 CP usr/local/etc/nginx.conf /usr/local/etc/nginx/nginx.conf
 
 ## Restart services
+SERVICE php-fpm restart
+SERVICE nginx restart
 
 ## DONE
