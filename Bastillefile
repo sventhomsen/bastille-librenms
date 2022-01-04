@@ -1,0 +1,94 @@
+## This Bastillefile tries to follow https://docs.librenms.org/Installation/Install-LibreNMS/ 
+
+## Variables
+ARG MARIADB_ROOT_PASSWORD *changeme*
+
+ARG MARIADB_USER_LIBRENMS_NAME librenms
+ARG MARIADB_USER_LIBRENMS_PASSWORD *changeme*
+
+ARG MARIAD_DATABASE_LIBRENMS librenms
+
+
+## Include existing templates from BastilleBSD repos
+INCLUDE https://github.com/BastilleBSD/templates/blob/main/databases/mariadb-server
+INCLUDE https://github.com/BastilleBSD/templates/tree/main/www/nginx
+
+
+
+## Configure mariadb
+
+# mariadb: secure installation
+
+
+# mariadb: create database for librenms
+CMD mysql -u root -e "CREATE DATABASE ${MARIADB_DATABASE_LIBRENMS} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# mariadb: create user for librenms
+CMD mysql -u root -e "CREATE USER '${MARIADB_USER_LIBRENMS_NAME}'@'localhost' IDENTIFIED BY '{MARIADB_USER_LIBRENMS_PASSWORD}';"
+CMD mysql -u root -e "GRANT ALL PRIVILEGES ON {MARIADB_DATABASE_LIBRENMS}.* TO '${MARIADB_USER_LIBRENMS_NAME}'@'localhost';"
+CMD mysql -u root -e "FLUSH PRIVILEGES;"
+
+
+
+## Install php
+# Install php and start php-fpm
+PKG php80
+SYSRC php_fpm_enable=YES
+SERVICE php-fpm start
+
+# Install required php modules
+PKG php80-composer
+PKG php80-ctype
+PKG php80-curl             
+PKG php80-dom
+PKG php80-fileinfo
+PKG php80-filter
+PKG php80-gd
+PKG php80-intl
+PKG php80-mbstring
+PKG php80-openssl
+PKG php80-pdo
+PKG php80-pdo_mysql
+PKG php80-phar
+PKG php80-posix
+PKG php80-session
+PKG php80-sockets
+PKG php80-tokenizer
+PKG php80-xml
+
+# Configure PHP
+
+
+
+## Install librenms from stable repo
+
+# Add bash for user librenms
+PKG bash
+
+# Add user librenms 
+CMD pw useradd -q -n librenms -g librenms -d /opt/librenms -s /usr/local/bin/bash -w no 
+
+# Pull librenms from git
+PKG git
+CMD git clone https://github.com/librenms/librenms.git /opt/librenms
+
+# Fix permissions an ownership
+CMD chown -R librenms:librenms /opt/librenms
+CMD chmod 771 /opt/librenms
+CMD setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+CMD setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+
+# Install PHP dependencies
+CMD su - librenms '/opt/librenms/scripts/composer_wrapper.php install --no-dev'
+
+## Configure librenms for first login of admin user
+# call lnms options for database
+# migrate database
+
+## Configure nginx
+CP usr/local/etc/nginx.conf /usr/local/etc/nginx.conf
+
+## Restart services
+
+
+## DONE
