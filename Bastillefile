@@ -8,6 +8,7 @@ ARG MARIADB_USER_LIBRENMS_PASSWORD=*changeme*
 
 ARG MARIADB_DATABASE_LIBRENMS_NAME=librenms
 
+ARG TIMEZONE=Europe/Berlin
 
 ## Include existing templates from BastilleBSD repos
 INCLUDE https://gitlab.com/bastillebsd-templates/mariadb-server
@@ -57,7 +58,7 @@ PKG php80-tokenizer
 PKG php80-xml
 
 # Configure PHP
-CMD sed s/\;date.timezone\ =/date.timezone=GMT+1/ < /usr/local/etc/php.ini-production > /usr/local/etc/php.ini
+CMD sed s/\;date.timezone\ =/date.timezone=${TIMEZONE}/ < /usr/local/etc/php.ini-production > /usr/local/etc/php.ini
 
 
 ## Install and configure python
