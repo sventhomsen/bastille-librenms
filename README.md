@@ -5,7 +5,7 @@ This template creates a working installation of LibreNMS with a clean database.
 
 I've created this Bastillefile mostly as an alternative documentation of my setup at home. 
 
-There also is a port of librenms, which you could also try.
+There also is a [port of librenms](https://www.freshports.org/net-mgmt/librenms), which you could or should also try first. 
 
 ## Usage
 
